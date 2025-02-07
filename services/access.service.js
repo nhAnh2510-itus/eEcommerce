@@ -5,7 +5,9 @@ const crypto = require('crypto')
 const keyTokenservice = require('./keyToken.service')
 const {createTokenPair} = require('../auth/authUtils')
 const {getInfoData} = require('../utils')
-
+const { BadRequestError,AuthFailureError,ForbiddenError } = require('../core/error.response')
+const {findByEmail} = require('./shop.service')
+const {verifyJWT} = require('../auth/authUtils')
 
 const RoleShop ={
     SHOP:'shop',
@@ -15,15 +17,92 @@ const RoleShop ={
 // Không cần tạo một instance của AccessService để sử dụng phương thức này.
 //Nếu bạn không sử dụng static, mỗi khi tạo một instance của class AccessService, một bản sao của phương thức signup sẽ được tạo lại và gắn vào instance đó. Điều này không cần thiết nếu tất cả các phương thức đều độc lập với instance.
 class AccessService {
+
+    static handlerRefreshToken = async (refreshToken)=>{ // Dùng khi accessToken hết hạn thì dùng refreshToken để tạo lại accessToken và khi mà refreshToken này đã được xài và dùng thêm lần nữa thì sẽ bị đưa vào nghi vấn
+        // check xem token này đa được sử dụng chưa
+        const foundToken = await keyTokenservice.findByRefreshTokenUsed(refreshToken)
+        // Nếu có
+        if(foundToken) {
+            // decode xem đây là ai
+            const{userId, email} = await verifyJWT(refreshToken,foundToken.privateKey)
+            console.log({userId,email})
+            // xóa tất cả token trong keyStore
+            await keyTokenservice.deleteKeyById(userId)
+            throw new ForbiddenError('somethings wrong happened!! Pls relogin')
+            
+        }
+
+        const holderToken = await keyTokenservice.findByRefreshToken(refreshToken)
+        if(!holderToken) throw new AuthFailureError('Shop not registered') 
+        
+
+        const {userId, email} = await verifyJWT(refreshToken,holderToken.privateKey)
+        console.log('2--',{userId,email})
+        const foundShop = await findByEmail({email})
+        if(!foundShop) throw new AuthFailureError('Shop not registered')
+
+        // create 1 cap moi
+        const tokens = await createTokenPair({userId,email},holderToken.publicKey,holderToken.privateKey)
+
+        // await holderToken.Update({
+        //     $set:{
+        //         refreshToken: tokens.refreshToken
+        //     },
+        //     $addToSet:{
+        //         refreshTokenUsed: refreshToken // da duoc dung de lay token moi
+        //     }
+        // })
+        holderToken.refreshToken = tokens.refreshToken;
+        holderToken.refreshTokenUsed.push(refreshToken);
+        await holderToken.save();
+
+        return {
+            user:{userId, email},
+            tokens
+        }
+
+    }
+
+    static logout = async (keyStore)=>{
+        const delkey = await keyTokenservice.removeById(keyStore._id)
+        console.log('delkey',delkey)
+        return delkey
+    }
+
+
+    static Login = async ({email,password, refreshToken = null})=>{
+        //1
+        const foundShop = await findByEmail({email})
+        if(!foundShop){
+            throw new BadRequestError('Shop not found')
+        }
+
+
+        //2
+        const match = bcrypt.compare(password,foundShop.password)
+        if(!match) throw new AuthFailureError('Authentication error')
+        
+        //3
+        const publicKey = crypto.randomBytes(64).toString('hex')
+        const privateKey = crypto.randomBytes(64).toString('hex')
+
+        //4 create token
+        const {_id:userId} = foundShop._id
+        const tokenPair = await createTokenPair({userId,email}, publicKey, privateKey)
+        await keyTokenservice.createKeyToken({publicKey,privateKey,refreshToken:tokenPair.refreshToken,userId})
+        return{
+            metadata:{
+                shop: getInfoData({fields:['name','email'],object:foundShop}),
+                token: tokenPair
+        }
+
+    }}
     static signup = async({name,email,password})=>{
         try{
             //check email exist
             const holdermodel = await shopModel.findOne({email}).lean()
             if(holdermodel){
-                return {
-                    code:'XXX',
-                    message:'Shop already exist'
-                }
+                throw new BadRequestError('Shop already exists')
             }
             const hashpassword = await bcrypt.hash(password,10)
             const newShop = await shopModel.create({name,email,password:hashpassword,roles:[RoleShop.SHOP]})
@@ -91,3 +170,6 @@ class AccessService {
 }
 
 module.exports = AccessService
+
+
+

@@ -21,9 +21,13 @@ var keyTokenSchema = new Schema({
         type:String,
         required:true,
     },
-    refreshToken:{
+    refreshTokenUsed:{
         type:Array,
         Default:[],
+    },
+    refreshToken:{
+        type:String,
+        required:true,
     },
 },{
 collection:COLLECTION_NAME,
