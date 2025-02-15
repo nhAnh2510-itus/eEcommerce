@@ -3,6 +3,7 @@
 const {product,clothing,electronics} = require('../models/product.model')
 const inventory = require('../models/inventory.model')
 const { BadRequestError,AuthFailureError,ForbiddenError } = require('../core/error.response')
+const {createInventory} = require('../models/repositories/inventory.repo')
 const {findAllDraftsForShop,
      publishProductByShop,
      findAllPublishForShop,
@@ -100,7 +101,7 @@ class Product{
     async createProduct(product_id){
         const newProduct =  await product.create({...this, _id : product_id})
         if(newProduct) {
-            await inventory.create({invent_productId:product_id,invent_stock:this.product_quantity,invent_shopId:this.product_shop})
+            await createInventory({productId: newProduct._id, stock: this.product_quantity, shopId: this.product_shop})
         }
 
         return newProduct
