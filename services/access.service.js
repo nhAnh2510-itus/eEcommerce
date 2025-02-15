@@ -63,6 +63,35 @@ class AccessService {
 
     }
 
+
+    static handlerRefreshTokenV2 = async ({refreshToken,user,keyStore})=>{ // Dùng khi accessToken hết hạn thì dùng refreshToken để tạo lại accessToken và khi mà refreshToken này đã được xài và dùng thêm lần nữa thì sẽ bị đưa vào nghi vấn
+        const {userId, email} = user
+
+        if(keyStore.refreshTokenUsed.includes(refreshToken)){
+            await keyTokenservice.deleteKeyById(userId)
+            throw new ForbiddenError('somethings wrong happened!! Pls relogin')
+        }
+
+        if(keyStore.refreshToken !== refreshToken) throw new AuthFailureError('Shop not registered')
+    
+        const foundShop = await findByEmail({email})
+        if(!foundShop) throw new AuthFailureError('Shop not registered')
+
+        // create 1 cap moi
+        const tokens = await createTokenPair({userId,email},keyStore.publicKey,keyStore.privateKey)
+
+        keyStore.refreshToken = tokens.refreshToken;
+        keyStore.refreshTokenUsed.push(refreshToken);
+        await keyStore.save();
+
+        return {
+            user,
+            tokens
+        }
+
+
+    }
+
     static logout = async (keyStore)=>{
         const delkey = await keyTokenservice.removeById(keyStore._id)
         console.log('delkey',delkey)
@@ -70,7 +99,7 @@ class AccessService {
     }
 
 
-    static Login = async ({email,password, refreshToken = null})=>{
+    static Login = async ({email,password, refreshToken = null})=>{ // lí do để refreshToken = null là vì khi tạo ban đầu sẽ chưa có, khi login lại cần xóa cookies thì lúc này cookies sẽ có refreshToken này và cần đưa vào refreshTokenUsed
         //1
         const foundShop = await findByEmail({email})
         if(!foundShop){
