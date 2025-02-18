@@ -1,8 +1,12 @@
 'use strict'
 const _ = require('lodash') // công dụng là để so sánh 2 object hoặc array có giống nhau không 
 
+const {Types}  = require('mongoose')
 
 
+const convertToObjectId = id =>{
+    Types.ObjectId(id)
+}
 const getInfoData = ({fields = [], object = {}})=>{
     return _.pick(object,fields)
 }
@@ -45,5 +49,6 @@ module.exports = {
     getSelectData,
     unGetSelectData,
     removeUndefinedObject,
-    updateNestedObjectParse
+    updateNestedObjectParse,
+    convertToObjectId
 }
