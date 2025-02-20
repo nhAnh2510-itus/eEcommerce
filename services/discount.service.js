@@ -12,25 +12,37 @@ const { findAllProduct } = require('../models/repositories/product.repo')
 const { convertToObjectId } = require('../utils')
 const { findAllDiscountCodesUnselect,findAllDiscountCodesSelect, checkDiscountExists } = require('../models/repositories/discount.repo')
 class DiscountService{
-    static async createDiscount (payload){
+    static async createDiscount(payload) {
         const {
-            code, start_date, end_date, value, type, max_uses, uses_count, max_uses_per_user, max_value, min_order_value, shop_id,
-            is_active, description, product_ids, applies_to, name 
-        } = payload
-        if(new Date() < new Date(start_date) || new Date() > new Date(end_date)) {
-            throw new BadRequestError('Invalid date range')
+            code, start_date, end_date, value, type, max_uses, uses_count = 0, max_uses_per_user, min_order_value = 0, 
+            shop_id, is_active, description, product_ids = [], applies_to, name
+        } = payload;
+        
+        console.log(payload)
+        if (!["percentage", "fixed"].includes(type)) {
+            throw new BadRequestError("Invalid discount type");
         }
-
-
-
-        // create index for discount code
+        if (!["all", "specific_products"].includes(applies_to)) {
+            throw new BadRequestError("Invalid applies_to value");
+        }
+        if (applies_to === "specific_products" && product_ids.length === 0) {
+            throw new BadRequestError("Product IDs required for specific_products discount");
+        }
+    
+        // if (new Date() < new Date(start_date) || new Date() > new Date(end_date)) {
+        //     throw new BadRequestError("Invalid date range");
+        // }
+    
+        // Check if discount code already exists
         const foundDiscount = await discount.findOne({
             discount_code: code,
             discount_shopId: convertToObjectId(shop_id)
-        }).lean()
-
-        if(foundDiscount && foundDiscount.discount_isActive) throw new BadRequestError('Discount code already exists')
-
+        }).lean();
+    
+        if (foundDiscount && foundDiscount.discount_isActive) {
+            throw new BadRequestError("Discount code already exists");
+        }
+    
         const newDiscount = await discount.create({
             discount_name: name,
             discount_code: code,
@@ -42,26 +54,27 @@ class DiscountService{
             discount_max_usage: max_uses,
             discount_count_used: uses_count,
             discount_max_usage_per_user: max_uses_per_user,
-            discount_max_value: max_value,
-            discount_min_order_value: min_order_value || 0,
+            discount_min_order_value: min_order_value,
             discount_shopId: convertToObjectId(shop_id),
             discount_isActive: is_active,
             discount_applies_to: applies_to,
-            discount_products: applies_to ==='all'? []:product_ids
-        })
-
-        return newDiscount
+            discount_products_ids: applies_to === "all" ? [] : product_ids,
+            discount_user_used: []// Initialize with empty array
+        });
+    
+        return newDiscount;
     }
+    
 
     static async updateDiscount (discount_id, payload){
 
     }
 
-    static async getAllDiscountCodesWithProducts({code, shop_id, userId, limit, page}){
+    static async getAllDiscountCodesWithProducts({code, shop_id,limit, page}){
         const foundDiscount = await discount.findOne({
             discount_code: code,
             discount_shopId: convertToObjectId(shop_id)
-        }).lean()
+        })
 
         if(!foundDiscount || !foundDiscount.discount_isActive) throw new NotFoundError('Discount code not found')
 
