@@ -110,15 +110,19 @@ const authenticationV2 = asyncHandler(async (req,res,next)=>{
     }
 
     const accessToken = req.headers[HEADER.AUTHORIZATION]
+    console.log('accessToken',accessToken)
     if(!accessToken) throw new AuthFailureError('invalid token')
 
     try {
         const decodeUser = JWT.verify(accessToken, keyStore.publicKey)
         if(userId !== decodeUser.userId) throw new AuthFailureError('invalid user')
         req.keyStore = keyStore
+        req.user = decodeUser
         return next()
     } catch (error) {
-        throw error
+       
+            throw error; // Rethrow other unexpected errors
+        
     }
     // đây là 1 middleware, khi muốn request thì phải qua hàm này.
 })
