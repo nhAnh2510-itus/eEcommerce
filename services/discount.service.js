@@ -141,13 +141,13 @@ class DiscountService{
             discount_max_usage_per_user,
             discount_value,
             discount_type,
-            discount_user_usage
+            discount_user_used
         } = foundDiscount
 
 
         if(!discount_isActive) throw new NotFoundError('discount expried!')
         if(!discount_max_usage) throw new NotFoundError('Discount are out')
-        if( new Date() < new Date(discount_start_date) || new Date() > new Date(discount_end_date)) throw new NotFoundError('Discount is not valid')
+        // if( new Date() < new Date(discount_start_date) || new Date() > new Date(discount_end_date)) throw new NotFoundError('Discount is not valid')
         let totalAmount = 0
         if(discount_min_order_value > 0 ) {
             totalAmount = products.reduce((acc, product)=>{
@@ -158,8 +158,10 @@ class DiscountService{
         }
 
         if(discount_max_usage_per_user > 0){
-            const userUseDiscount = discount_user_usage.find(user => user.userId === userId)
-            if(userUseDiscount > discount_max_usage_per_user) throw new NotFoundError('Discount used up')
+            const userUseDiscount = discount_user_used.find(user => user.userId === userId)
+            if (userUseDiscount && userUseDiscount.usageCount >= discount_max_usage_per_user) {
+                throw new NotFoundError('Discount used up');
+            }
         }
         
         const amount = discount_type === 'fixed' ? discount_value: totalAmount*(discount_value/100) 
