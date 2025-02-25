@@ -25,38 +25,41 @@ class CartService{
     static async updateQuantity({userId,productId,quantity}){
         
         const query = { 
-            cart_userId: parseInt(userId, 10), // Chuyển sang số
-            'cart_products.product_id': productId,
+            cart_userId: userId, // Chuyển sang số
+            'cart_products.productId': productId,
             cart_state: 'active'
         };
-        const productInCart = await CartService.getListUserCart({userId});
-        console.log('Product in Cart:', productInCart);
-        console.log('Query:', query);
+        
         
         
         const updateSet = {
-            $inc: { 'cart_products.$.product_quantity': parseInt(quantity, 10) } // Cập nhật số lượng
+            $inc: { 'cart_products.$.quantity': quantity } // Cập nhật số lượng
         };
 
-        console.log('Update Set:', cart_products.$.product_quantity);
+      
         
         const options = { new: true}; // Không dùng `upsert: true` để tránh lỗi
     
         return await cart.findOneAndUpdate(query, updateSet, options);
     }
 
-    static async addToCart({userId,product={}}){
+    static async addToCart(payload){
+        const {userId,product} = payload
+        
         // check gio hang co ton tai khong
         // neu co thi update so luong
         // neu khong thi tao gio hang moi
         console.log('User ID:', userId);
         const findCart = await cart.findOne({cart_userId:userId});
+        
         if(!findCart){
+            
             return await CartService.createUserCart({userId:userId,products: product})
         }
         
         // co gio hang nhung chua co san pham
         if ( findCart.cart_products.length === 0) {
+            
             findCart.cart_products = [product];
             return await findCart.save();
         }
@@ -73,12 +76,14 @@ class CartService{
         if (existingProduct) {
             // Nếu sản phẩm đã có → Tăng số lượng
             console.log(product.quantity)
+            console.log('111111')
             return await CartService.updateQuantity({ 
                 userId, 
                 productId: product.productId, 
                 quantity:  product.quantity 
             });
         } else {
+            console.log('222222')
             // Nếu sản phẩm chưa có, thêm vào giỏ hàng
             findCart.cart_products.push(product);
             return await findCart.save();
@@ -127,7 +132,7 @@ class CartService{
         if (!foundProduct) throw new NotFoundError("Product not found");
     
         // Kiểm tra shopId hợp lệ
-        if (foundProduct.product_shop.toString() !== shopId.toString()) {
+        if (foundProduct.product_shop !== convertToObjectId(shopId)) {
             throw new NotFoundError("Product does not belong to the shop");
         }
     
