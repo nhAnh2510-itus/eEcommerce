@@ -15,10 +15,6 @@ var cartSchema = new Schema({
         enum:['active','completed','failed','pending'],
         default:'active',
     },
-    userId:{
-        type:String,
-        required:true,
-    },
     cart_products:{
         type:Array,
         default:[],

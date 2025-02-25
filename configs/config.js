@@ -10,6 +10,11 @@ const dev ={
         host : process.env.DEV_DB_HOST ,
         port : process.env.DEV_DB_PORT,
         name : process.env.DEV_DB_NAME 
+    },
+    redis: {
+        port: process.env.DEV_REDIS_PORT,
+        host: process.env.DEV_REDIS_HOST,
+        password: process.env.DEV_REDIS_PASSWORD
     }
 }
 
@@ -21,6 +26,9 @@ const pro = {
         host : process.env.PRO_DB_HOST ,
         port : process.env.PRO_DB_PORT,
         name : process.env.PRO_DB_NAME 
+    },
+    redis: {
+        url: process.env.PRO_REDIS_URL
     }
 }
 
