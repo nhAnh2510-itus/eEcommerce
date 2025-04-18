@@ -46,6 +46,7 @@ class CheckoutService{
         }, shop_order_ids_new =[]
        
         for(let i=0;i<shop_order_ids.length;i++){
+            console.log('Shop Order Ids:', shop_order_ids[i]);
             const {shopId, shop_discounts=[], item_products=[]} = shop_order_ids[i];
             const checkProductServer = await checkProductByServer(item_products)
             console.log('Check Product Server:', checkProductServer);

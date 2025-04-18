@@ -41,7 +41,7 @@ class DiscountController{
             
             message: 'Discount codes with products fetched successfully',
             metadata: await DiscountService.getAllDiscountCodesWithProducts(
-                {...req.query}
+                {...req.query, shop_id: "67a39dd2e7e002d5dcab69dd"}
             )
         }).Send(res)
     }

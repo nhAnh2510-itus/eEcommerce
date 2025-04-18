@@ -19,6 +19,13 @@ class CheckoutController{
             metadata: await CheckoutService.checkoutReview( req.body)
         }).Send(res)
     }
+
+    orderByUser = async (req, res, next)=>{
+        new SuccessResponse({
+            message:'Order products success!',
+            metadata: await CheckoutService.orderByUser( req.body)
+        }).Send(res)
+    }
    
 }
 
