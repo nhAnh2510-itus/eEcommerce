@@ -37,6 +37,14 @@ var orderSchema = new Schema({
    },
    order_product:{
     type: Array,  required:true,
+    /*
+        productId,
+        quantity,
+        price,
+        shopId,
+        status,
+        note,
+    */
    },
    order_trackingNumber: {
     type:String, default: '#0000118022022'

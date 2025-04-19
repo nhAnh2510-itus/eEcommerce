@@ -70,12 +70,14 @@ class DiscountService{
 
     }
 
-    static async getAllDiscountCodesWithProducts({code, shop_id,limit, page}){
+    static async getAllDiscountCodesWithProducts(payload){
+        const {limit, page, shop_id, code} = payload
+        console.log('code',code)
         const foundDiscount = await discount.findOne({
             discount_code: code,
             discount_shopId: convertToObjectId(shop_id)
         })
-
+        console.log('foundDiscount',foundDiscount)
         if(!foundDiscount || !foundDiscount.discount_isActive) throw new NotFoundError('Discount code not found')
 
         let products
@@ -130,8 +132,9 @@ class DiscountService{
                 discount_shopId:convertToObjectId(shopId)
             } 
         })
-
+        console.log('products'  , products)
         if(!foundDiscount) throw new NotFoundError('Discount does not  exists')
+        
         
         const {discount_isActive,
             discount_max_usage,
@@ -144,18 +147,19 @@ class DiscountService{
             discount_user_used
         } = foundDiscount
 
-
+        console.log('foundDiscount',discount_min_order_value)
         if(!discount_isActive) throw new NotFoundError('discount expried!')
         if(!discount_max_usage) throw new NotFoundError('Discount are out')
         // if( new Date() < new Date(discount_start_date) || new Date() > new Date(discount_end_date)) throw new NotFoundError('Discount is not valid')
         let totalAmount = 0
-        if(discount_min_order_value > 0 ) {
+        if(discount_min_order_value >= 0 ) {
             totalAmount = products.reduce((acc, product)=>{
-                return acc + product.product_price*product.product_quantity 
+                return acc + product.price*product.quantity 
             },0)
 
             if(totalAmount < discount_min_order_value) throw new NotFoundError(`Discount requires minimum order value ${discount_min_order_value}`)
         }
+      
 
         if(discount_max_usage_per_user > 0){
             const userUseDiscount = discount_user_used.find(user => user.userId === userId)

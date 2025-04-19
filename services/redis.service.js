@@ -12,7 +12,7 @@ const {promisify} = require('util');
 const redis = require('redis');
 const config = require('../configs/config');
 
-// Sử dụng URL kết nối Redis Cloud
+
 const redisClient = redis.createClient(
     config.redis.port,  // Ví dụ: 6379
     config.redis.host,  // Ví dụ: 'redis-12345.c300.us-east-1-2.ec2.cloud.redislabs.com'
@@ -33,7 +33,7 @@ const setnxAsync = promisify(redisClient.setnx).bind(redisClient); // dong nay d
 const delAsyncKey = promisify(redisClient.del).bind(redisClient);
 
 const acquireLock = async (productId, quantity, cartId)=>{
-    const key = `lock_v2023_${productId}`
+    const key = `lock_v2025_${productId}`
     const retryTimes = 10;
     const expireTime = 3000; // 3 seconds tam block, để tránh hệ thống bị treo và ko phát khóa dẫn đến deadlock
 
