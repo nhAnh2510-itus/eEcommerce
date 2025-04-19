@@ -107,6 +107,7 @@ class CheckoutService{
         user_address = {},
         user_payment = {},
     }){
+
         const {shop_order_ids_new, checkout_order} = await this.checkoutReview({
             cartId,
             userId,
@@ -117,7 +118,7 @@ class CheckoutService{
         const products = shop_order_ids_new.flatMap(order => order.item_product) // flatMap dung de chuyen array 2 chieu thanh 1 chieu
         console.log('[1]', products);
         let acquireProduct =[]
-        for(let i=0; i<products.length;i++){
+        for(let i = 0 ; i < products.length ; i++ ){
             const {productId, quantity} = products[i];
             const keyLock = await acquireLock(productId, quantity, cartId)  
             acquireProduct.push(keyLock? true : false)
@@ -126,6 +127,7 @@ class CheckoutService{
 
 
             if(keyLock){
+                console.log("keyLock: True")
                 await releaseLock(keyLock)
             }
         }
