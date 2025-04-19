@@ -88,4 +88,8 @@ ecommerce-backend/
   │ ├── reasonPhrases.js  
   │ └── statusCodes.js     
 │ └── app.js  
+
+## API LIST
+Link: https://www.notion.so/e-Ecommerce-API-1da96f01577d80bb8f06c9242dcf9e71?pvs=4
+
   
