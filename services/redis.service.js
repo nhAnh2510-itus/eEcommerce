@@ -34,6 +34,7 @@ const delAsyncKey = promisify(redisClient.del).bind(redisClient);
 
 const acquireLock = async (productId, quantity, cartId)=>{
     const key = `lock_v2025_${productId}`
+    console.log('key:', key)
     const retryTimes = 10;
     const expireTime = 3000; // 3 seconds tam block, để tránh hệ thống bị treo và ko phát khóa dẫn đến deadlock
 

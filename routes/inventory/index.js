@@ -8,7 +8,8 @@ const InventoryController = require('../../controllers/inventory.controller');
 
 
 router.use(authenticationV2)
-router.post('/review', asyncHandler(InventoryController.addStockToInventory))
+router.post('', asyncHandler(InventoryController.createInventory))
+router.post('/addstock', asyncHandler(InventoryController.addStockToInventory))
 
 
 
