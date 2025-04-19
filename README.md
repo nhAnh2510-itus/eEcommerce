@@ -5,25 +5,30 @@ This is an ecommerce backend system developed using the Node.js framework and Mo
 ## Features
 
 - **Security**: 
-  - Implemented HMAC-SHA (HSA) for data integrity and security.
-  - Used API keys and refresh tokens for secure authentication.
+  - Implemented JWT-HMAC for data integrity and security.
+  - Used API keys for RBAC and refresh tokens for secure authentication.
 
-- **Data Models**: 
-  - Designed various collections in MongoDB to manage essential ecommerce data, including:
-    - Shops
-    - Products
-    - Keys
+- **ERD**:
+  ![ecommerce](https://github.com/user-attachments/assets/60aad73b-77d4-43df-a8f0-8e72dfc6f8cd)
+
+  - Mapping from ERD to MongoDB models to manage essential ecommerce data, including:
+    - Shop
+    - Product
+    - KeyToken
     - Inventory
-    - Orders
-    - Carts
-
+    - Order
+    - Cart
+    - Discount
+    - Api-key
 - **Stock Management**: 
   - Utilized Redis to simulate permission-based locks for managing concurrent requests to product stock.
   - Prevents over-ordering of items when inventory is insufficient, ensuring better stock control and optimized performance.
+- **Using Factory Design pattern**:
+  - The pattern turns “lots of conditionals sprinkled everywhere” into “plug‑in modules registered once”, making the service easier to maintain, safer to scale, and cleaner to reason about.
 
 ## Technologies Used
 
-- **Node.js**: Backend framework for handling API requests.
+- **Expressjs**: Backend framework for handling API requests.
 - **MongoDB**: NoSQL database for storing and managing data.
 - **Redis**: Used to simulate permission locks for effective stock management and to handle concurrent requests efficiently.
 
@@ -89,7 +94,7 @@ ecommerce-backend/
   │ └── statusCodes.js     
 │ └── app.js  
 
-## API LIST
+## API LIST 
 Link: https://www.notion.so/e-Ecommerce-API-1da96f01577d80bb8f06c9242dcf9e71?pvs=4
 
   
