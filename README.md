@@ -33,59 +33,59 @@ This backend system aims to provide a reliable, scalable, and secure solution fo
 ## Folder Structure
 
 Below is the folder structure of the project, showcasing how the files and modules are organized:
-ecommerce-backend/ 
-│ ├── auth/ 
-  │ ├── authUtils.js
-  │ └── checkauth.js 
-│ ├── configs/ 
-  │ └── config.js 
-│ ├── controllers/ 
-  │ ├── access.controller.js 
-  │ ├── cart.controller.js 
-  │ ├── checkout.controller.js 
-  │ ├── discount.controller.js 
-  │ ├── inventory.controller.js 
-  │ └── product.controller.js 
-│ ├── core/ 
-  │ ├── error.response.js 
-  │ └── success.response.js 
-│ ├── dbs/ 
-  │ └── db.js │ 
-├── helps/ 
-  │ ├── asyncHandler.js 
-  │ └── checkconnect.js 
-│ ├── models/ 
-  │ └── repositories/ 
-  │ ├── apiKey.model.js 
-  │ ├── cart.model.js 
-  │ ├── discount.model.js 
-  │ ├── inventory.model.js 
-  │ ├── keyToken.model.js 
-  │ ├── order.model.js 
-  │ └── product.model.js 
-│ ├── routes/ 
-  │ ├── access/ 
-  │ ├── cart/ 
-  │ ├── checkout/ 
-  │ ├── discount/ 
-  │ ├── inventory/ 
-  │ ├── product/ 
-  │ ├── shop/ 
-│ ├── services/ 
-  │ ├── access.service.js 
-  │ ├── apiKey.service.js 
-  │ ├── cart.service.js 
-  │ ├── checkout.service.js 
-  │ ├── discount.service.js 
-  │ ├── inventory.service.js 
-  │ ├── keyToken.service.js 
-  │ ├── product.service.js 
-  │ ├── redis.service.js  
-  │ └── Shop.service.js 
-│ ├── utils/ 
-  │ ├── httpStatusCode.js 
-  │ ├── index.js 
-  │ ├── reasonPhrases.js 
-  │ └── statusCodes.js 
-│ └── app.js
+ecommerce-backend/  
+│ ├── auth/  
+  │ ├── authUtils.js  
+  │ └── checkauth.js  
+│ ├── configs/   
+  │ └── config.js   
+│ ├── controllers/   
+  │ ├── access.controller.js   
+  │ ├── cart.controller.js   
+  │ ├── checkout.controller.js   
+  │ ├── discount.controller.js  
+  │ ├── inventory.controller.js  
+  │ └── product.controller.js  
+│ ├── core/  
+  │ ├── error.response.js   
+  │ └── success.response.js   
+│ ├── dbs/   
+  │ └── db.js │   
+├── helps/   
+  │ ├── asyncHandler.js   
+  │ └── checkconnect.js   
+│ ├── models/   
+  │ └── repositories/   
+  │ ├── apiKey.model.js   
+  │ ├── cart.model.js   
+  │ ├── discount.model.js   
+  │ ├── inventory.model.js   
+  │ ├── keyToken.model.js    
+  │ ├── order.model.js   
+  │ └── product.model.js   
+│ ├── routes/  
+  │ ├── access/   
+  │ ├── cart/  
+  │ ├── checkout/   
+  │ ├── discount/   
+  │ ├── inventory/   
+  │ ├── product/   
+  │ ├── shop/   
+│ ├── services/   
+  │ ├── access.service.js   
+  │ ├── apiKey.service.js   
+  │ ├── cart.service.js   
+  │ ├── checkout.service.js   
+  │ ├── discount.service.js   
+  │ ├── inventory.service.js   
+  │ ├── keyToken.service.js   
+  │ ├── product.service.js   
+  │ ├── redis.service.js    
+  │ └── Shop.service.js   
+│ ├── utils/   
+  │ ├── httpStatusCode.js   
+  │ ├── index.js   
+  │ ├── reasonPhrases.js  
+  │ └── statusCodes.js     
+│ └── app.js  
   
